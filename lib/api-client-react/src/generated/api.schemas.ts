@@ -86,6 +86,19 @@ export interface AttendanceAction {
   employeeCode: string;
 }
 
+export type AttendanceLogUpdateType = typeof AttendanceLogUpdateType[keyof typeof AttendanceLogUpdateType];
+
+
+export const AttendanceLogUpdateType = {
+  checkin: 'checkin',
+  checkout: 'checkout',
+} as const;
+
+export interface AttendanceLogUpdate {
+  type?: AttendanceLogUpdateType;
+  timestamp?: string;
+}
+
 export interface AttendanceLogsResponse {
   logs: AttendanceLog[];
   total: number;

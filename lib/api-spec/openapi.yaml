@@ -270,6 +270,56 @@ paths:
                 items:
                   $ref: "#/components/schemas/ActiveEmployee"
 
+  /attendance/logs/{id}:
+    put:
+      operationId: updateAttendanceLog
+      tags: [attendance]
+      summary: Update an attendance log entry (admin)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AttendanceLogUpdate"
+      responses:
+        "200":
+          description: Updated log
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AttendanceLog"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    delete:
+      operationId: deleteAttendanceLog
+      tags: [attendance]
+      summary: Delete an attendance log entry (admin)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "204":
+          description: Deleted
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
   /attendance/recent:
     get:
       operationId: getRecentActivity
@@ -403,6 +453,16 @@ components:
         employeeCode:
           type: string
       required: [employeeCode]
+
+    AttendanceLogUpdate:
+      type: object
+      properties:
+        type:
+          type: string
+          enum: [checkin, checkout]
+        timestamp:
+          type: string
+          format: date-time
 
     AttendanceLogsResponse:
       type: object

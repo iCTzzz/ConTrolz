@@ -6,6 +6,9 @@ import {
   CheckOutBody,
   ListAttendanceLogsQueryParams,
   GetRecentActivityQueryParams,
+  UpdateAttendanceLogBody,
+  UpdateAttendanceLogParams,
+  DeleteAttendanceLogParams,
 } from "@workspace/api-zod";
 
 const router = Router();
@@ -178,6 +181,78 @@ router.get("/attendance/logs", async (req, res) => {
     offset,
     limit,
   });
+});
+
+router.put("/attendance/logs/:id", async (req, res) => {
+  const paramsParsed = UpdateAttendanceLogParams.safeParse(req.params);
+  if (!paramsParsed.success) {
+    return res.status(400).json({ error: "Bad Request", message: "Invalid id" });
+  }
+
+  const bodyParsed = UpdateAttendanceLogBody.safeParse(req.body);
+  if (!bodyParsed.success) {
+    return res.status(400).json({ error: "Bad Request", message: bodyParsed.error.message });
+  }
+
+  const [existing] = await db
+    .select({
+      id: attendanceLogsTable.id,
+      employeeId: attendanceLogsTable.employeeId,
+      type: attendanceLogsTable.type,
+      timestamp: attendanceLogsTable.timestamp,
+      employeeCode: employeesTable.employeeCode,
+      employeeName: employeesTable.name,
+      department: employeesTable.department,
+    })
+    .from(attendanceLogsTable)
+    .innerJoin(employeesTable, eq(attendanceLogsTable.employeeId, employeesTable.id))
+    .where(eq(attendanceLogsTable.id, paramsParsed.data.id))
+    .limit(1);
+
+  if (!existing) {
+    return res.status(404).json({ error: "Not Found", message: "Log entry not found" });
+  }
+
+  const updates: Partial<typeof attendanceLogsTable.$inferInsert> = {};
+  if (bodyParsed.data.type) updates.type = bodyParsed.data.type as "checkin" | "checkout";
+  if (bodyParsed.data.timestamp) updates.timestamp = new Date(bodyParsed.data.timestamp);
+
+  const [updated] = await db
+    .update(attendanceLogsTable)
+    .set(updates)
+    .where(eq(attendanceLogsTable.id, paramsParsed.data.id))
+    .returning();
+
+  return res.json({
+    id: updated.id,
+    employeeId: existing.employeeId,
+    employeeCode: existing.employeeCode,
+    employeeName: existing.employeeName,
+    department: existing.department,
+    type: updated.type,
+    timestamp: updated.timestamp,
+  });
+});
+
+router.delete("/attendance/logs/:id", async (req, res) => {
+  const parsed = DeleteAttendanceLogParams.safeParse(req.params);
+  if (!parsed.success) {
+    return res.status(400).json({ error: "Bad Request", message: "Invalid id" });
+  }
+
+  const [existing] = await db
+    .select()
+    .from(attendanceLogsTable)
+    .where(eq(attendanceLogsTable.id, parsed.data.id))
+    .limit(1);
+
+  if (!existing) {
+    return res.status(404).json({ error: "Not Found", message: "Log entry not found" });
+  }
+
+  await db.delete(attendanceLogsTable).where(eq(attendanceLogsTable.id, parsed.data.id));
+
+  return res.status(204).send();
 });
 
 router.get("/attendance/active", async (req, res) => {

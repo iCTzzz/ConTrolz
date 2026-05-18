@@ -11,6 +11,8 @@ export * from './attendanceAction';
 export * from './attendanceLog';
 export * from './attendanceLogsResponse';
 export * from './attendanceLogType';
+export * from './attendanceLogUpdate';
+export * from './attendanceLogUpdateType';
 export * from './dashboardStats';
 export * from './employee';
 export * from './employeeInput';

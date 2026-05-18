@@ -23,6 +23,7 @@ import type {
   ActiveEmployee,
   AttendanceAction,
   AttendanceLog,
+  AttendanceLogUpdate,
   AttendanceLogsResponse,
   DashboardStats,
   Employee,
@@ -800,6 +801,148 @@ export function useGetActiveEmployees<TData = Awaited<ReturnType<typeof getActiv
 
 
 
+
+export const getUpdateAttendanceLogUrl = (id: string,) => {
+
+
+
+
+  return `/api/attendance/logs/${id}`
+}
+
+/**
+ * @summary Update an attendance log entry (admin)
+ */
+export const updateAttendanceLog = async (id: string,
+    attendanceLogUpdate: AttendanceLogUpdate, options?: RequestInit): Promise<AttendanceLog> => {
+
+  return customFetch<AttendanceLog>(getUpdateAttendanceLogUrl(id),
+  {
+    ...options,
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(
+      attendanceLogUpdate,)
+  }
+);}
+
+
+
+
+export const getUpdateAttendanceLogMutationOptions = <TError = ErrorType<ErrorResponse>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateAttendanceLog>>, TError,{id: string;data: BodyType<AttendanceLogUpdate>}, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof updateAttendanceLog>>, TError,{id: string;data: BodyType<AttendanceLogUpdate>}, TContext> => {
+
+const mutationKey = ['updateAttendanceLog'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof updateAttendanceLog>>, {id: string;data: BodyType<AttendanceLogUpdate>}> = (props) => {
+          const {id,data} = props ?? {};
+
+          return  updateAttendanceLog(id,data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type UpdateAttendanceLogMutationResult = NonNullable<Awaited<ReturnType<typeof updateAttendanceLog>>>
+    export type UpdateAttendanceLogMutationBody = BodyType<AttendanceLogUpdate>
+    export type UpdateAttendanceLogMutationError = ErrorType<ErrorResponse>
+
+    /**
+ * @summary Update an attendance log entry (admin)
+ */
+export const useUpdateAttendanceLog = <TError = ErrorType<ErrorResponse>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateAttendanceLog>>, TError,{id: string;data: BodyType<AttendanceLogUpdate>}, TContext>, request?: SecondParameter<typeof customFetch>}
+ ): UseMutationResult<
+        Awaited<ReturnType<typeof updateAttendanceLog>>,
+        TError,
+        {id: string;data: BodyType<AttendanceLogUpdate>},
+        TContext
+      > => {
+      return useMutation(getUpdateAttendanceLogMutationOptions(options));
+    }
+
+export const getDeleteAttendanceLogUrl = (id: string,) => {
+
+
+
+
+  return `/api/attendance/logs/${id}`
+}
+
+/**
+ * @summary Delete an attendance log entry (admin)
+ */
+export const deleteAttendanceLog = async (id: string, options?: RequestInit): Promise<void> => {
+
+  return customFetch<void>(getDeleteAttendanceLogUrl(id),
+  {
+    ...options,
+    method: 'DELETE'
+
+
+  }
+);}
+
+
+
+
+export const getDeleteAttendanceLogMutationOptions = <TError = ErrorType<ErrorResponse>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteAttendanceLog>>, TError,{id: string}, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof deleteAttendanceLog>>, TError,{id: string}, TContext> => {
+
+const mutationKey = ['deleteAttendanceLog'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof deleteAttendanceLog>>, {id: string}> = (props) => {
+          const {id} = props ?? {};
+
+          return  deleteAttendanceLog(id,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type DeleteAttendanceLogMutationResult = NonNullable<Awaited<ReturnType<typeof deleteAttendanceLog>>>
+
+    export type DeleteAttendanceLogMutationError = ErrorType<ErrorResponse>
+
+    /**
+ * @summary Delete an attendance log entry (admin)
+ */
+export const useDeleteAttendanceLog = <TError = ErrorType<ErrorResponse>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteAttendanceLog>>, TError,{id: string}, TContext>, request?: SecondParameter<typeof customFetch>}
+ ): UseMutationResult<
+        Awaited<ReturnType<typeof deleteAttendanceLog>>,
+        TError,
+        {id: string},
+        TContext
+      > => {
+      return useMutation(getDeleteAttendanceLogMutationOptions(options));
+    }
 
 export const getGetRecentActivityUrl = (params?: GetRecentActivityParams,) => {
   const normalizedParams = new URLSearchParams();

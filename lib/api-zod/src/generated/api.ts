@@ -176,6 +176,37 @@ export const GetActiveEmployeesResponse = zod.array(GetActiveEmployeesResponseIt
 
 
 /**
+ * @summary Update an attendance log entry (admin)
+ */
+export const UpdateAttendanceLogParams = zod.object({
+  "id": zod.coerce.string()
+})
+
+export const UpdateAttendanceLogBody = zod.object({
+  "type": zod.enum(['checkin', 'checkout']).optional(),
+  "timestamp": zod.coerce.date().optional()
+})
+
+export const UpdateAttendanceLogResponse = zod.object({
+  "id": zod.string(),
+  "employeeId": zod.string(),
+  "employeeCode": zod.string(),
+  "employeeName": zod.string(),
+  "department": zod.string(),
+  "type": zod.enum(['checkin', 'checkout']),
+  "timestamp": zod.coerce.date()
+})
+
+
+/**
+ * @summary Delete an attendance log entry (admin)
+ */
+export const DeleteAttendanceLogParams = zod.object({
+  "id": zod.coerce.string()
+})
+
+
+/**
  * @summary Get recent attendance activity
  */
 export const getRecentActivityQueryLimitDefault = 10;
