@@ -1,10 +1,11 @@
-# [Project name]
+# AttendanceIQ
 
-_Replace the heading above with the project's name, and this line with one sentence describing what this app does for users._
+A premium SaaS attendance control system for registering employee check-ins and check-outs in real time.
 
 ## Run & Operate
 
-- `pnpm --filter @workspace/api-server run dev` — run the API server (port 5000)
+- `pnpm --filter @workspace/api-server run dev` — run the API server (port 8080)
+- `pnpm --filter @workspace/attendance run dev` — run the frontend (port 18763)
 - `pnpm run typecheck` — full typecheck across all packages
 - `pnpm run build` — typecheck + build all packages
 - `pnpm --filter @workspace/api-spec run codegen` — regenerate API hooks and Zod schemas from the OpenAPI spec
@@ -14,6 +15,7 @@ _Replace the heading above with the project's name, and this line with one sente
 ## Stack
 
 - pnpm workspaces, Node.js 24, TypeScript 5.9
+- Frontend: React + Vite, shadcn/ui, Tailwind CSS, Framer Motion, wouter
 - API: Express 5
 - DB: PostgreSQL + Drizzle ORM
 - Validation: Zod (`zod/v4`), `drizzle-zod`
@@ -22,15 +24,26 @@ _Replace the heading above with the project's name, and this line with one sente
 
 ## Where things live
 
-_Populate as you build — short repo map plus pointers to the source-of-truth file for DB schema, API contracts, theme files, etc._
+- `lib/api-spec/openapi.yaml` — OpenAPI spec (source of truth for API contracts)
+- `lib/db/src/schema/` — Drizzle ORM schema (employees.ts, attendance.ts)
+- `artifacts/api-server/src/routes/` — Express route handlers
+- `artifacts/attendance/src/pages/` — Frontend pages (dashboard, checkin, employees, attendance)
+- `artifacts/attendance/src/components/` — Shared UI components and layout
 
 ## Architecture decisions
 
-_Populate as you build — non-obvious choices a reader couldn't infer from the code (3-5 bullets)._
+- Contract-first: OpenAPI spec gates codegen which gates frontend development
+- Drizzle ORM with Postgres — no migrations layer, uses `drizzle-kit push` in dev
+- Orval generates React Query hooks and Zod validators from the OpenAPI spec
+- Entity-shaped schema names in OpenAPI (EmployeeInput, EmployeeUpdate) to avoid TS2308 collisions
+- Active employee detection: latest log per employee per day determines checkin/checkout state
 
 ## Product
 
-_Describe the high-level user-facing capabilities of this app once they exist._
+- **Dashboard**: Real-time KPIs (active employees, check-ins/outs today, total headcount), activity feed, active now panel
+- **Check-in Kiosk**: Employees enter their code to check in or out, with smart validation (duplicate check-in prevention, no-entry checkout prevention, inactive employee detection)
+- **Employee Management**: Add, edit, delete employees with search/filter
+- **Attendance Logs**: Paginated history filterable by date and type
 
 ## User preferences
 
@@ -38,7 +51,9 @@ _Populate as you build — explicit user instructions worth remembering across s
 
 ## Gotchas
 
-_Populate as you build — sharp edges, "always run X before Y" rules._
+- Run `pnpm --filter @workspace/api-spec run codegen` after any OpenAPI spec changes before touching backend routes
+- `pnpm run typecheck` verifies the full stack including generated types — run before deploying
+- Active employee state is determined by the most recent log entry per employee per calendar day
 
 ## Pointers
 

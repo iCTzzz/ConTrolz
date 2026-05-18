@@ -1,0 +1,274 @@
+Quiero que desarrolles un sistema SaaS moderno y profesional de **Control de Asistencia**, enfocado únicamente en el registro de entrada y salida de empleados.
+
+NO quiero un sistema enorme todavía.
+La prioridad es construir una primera versión sólida, limpia, profesional y escalable enfocada únicamente en:
+
+* Check-in (entrada)
+* Check-out (salida)
+* Registro de asistencia en tiempo real
+
+El sistema debe verse como un producto SaaS real y premium.
+
+---
+
+# Objetivo del sistema
+
+Crear una plataforma web moderna donde los empleados puedan:
+
+* Registrar entrada
+* Registrar salida
+* Ver su estado actual
+
+Y donde el administrador pueda:
+
+* Ver registros en tiempo real
+* Monitorear quién está activo
+* Consultar historial de asistencia
+
+---
+
+# Estilo visual requerido
+
+## Diseño
+
+Quiero una interfaz:
+
+* Minimalista
+* Moderna
+* Profesional
+* Tipo startup tecnológica
+* SaaS premium
+
+## Inspiración visual
+
+Inspirarse en:
+
+* Stripe
+* Notion
+* Linear
+* Slack
+
+---
+
+# UI/UX
+
+Quiero:
+
+* Mucho espacio visual
+* Diseño limpio
+* Sidebar elegante
+* Navbar minimalista
+* Tarjetas KPI modernas
+* Botones modernos
+* Inputs premium
+* Animaciones suaves
+* Responsive design
+* Loading states elegantes
+* Toast notifications modernas
+
+---
+
+# Tecnologías requeridas
+
+## Frontend
+
+* React
+* Next.js 15
+* TypeScript
+* Tailwind CSS
+* Shadcn/ui
+* Framer Motion
+* Lucide React
+
+## Backend
+
+* Next.js App Router
+* Server Actions o API Routes
+
+## Base de datos
+
+* PostgreSQL
+* Prisma ORM
+
+---
+
+# Compatibilidad importante
+
+El proyecto debe quedar completamente preparado para:
+
+1. Ejecutarse correctamente en Replit
+2. Subirse fácilmente a GitHub
+3. Desplegarse posteriormente en Vercel sin modificaciones importantes
+
+---
+
+# Estructura profesional requerida
+
+Usar arquitectura limpia:
+
+/app
+/components
+/components/ui
+/lib
+/hooks
+/services
+/types
+/prisma
+/public
+
+---
+
+# Funcionalidad principal
+
+## Registro de entrada y salida
+
+El sistema debe permitir:
+
+### Entrada
+
+* El empleado ingresa su ID
+* Se registra automáticamente:
+
+  * fecha
+  * hora
+  * tipo: entrada
+
+### Salida
+
+* El empleado vuelve a ingresar su ID
+* El sistema registra:
+
+  * fecha
+  * hora
+  * tipo: salida
+
+---
+
+# Validaciones inteligentes
+
+Implementar:
+
+* No permitir doble entrada
+* No permitir salida sin entrada
+* Detectar si el empleado ya está activo
+* Mostrar mensajes claros y modernos
+
+Ejemplos:
+
+* Entrada registrada correctamente
+* Salida registrada correctamente
+* Ya existe una entrada activa
+* No hay entrada registrada
+* Empleado no encontrado
+
+---
+
+# Dashboard principal
+
+Mostrar:
+
+* Empleados activos actualmente
+* Entradas del día
+* Salidas del día
+* Total de empleados presentes
+* Hora actual
+* Actividad reciente
+
+Agregar:
+
+* Tarjetas KPI modernas
+* Tabla elegante
+* Actualización visual en tiempo real
+
+---
+
+# Gestión básica de empleados
+
+Crear módulo simple para:
+
+* Agregar empleado
+* Editar empleado
+* Eliminar empleado
+
+Campos:
+
+* ID
+* Nombre
+* Departamento
+* Puesto
+* Estado
+
+---
+
+# Experiencia visual
+
+Quiero:
+
+* Diseño extremadamente limpio
+* Estética premium
+* Componentes modernos
+* Tarjetas tipo SaaS
+* Sombras suaves
+* Bordes redondeados
+* Excelente espaciado
+* UI profesional tipo startup
+
+---
+
+# Base de datos
+
+Usar Prisma con PostgreSQL.
+
+Modelos mínimos:
+
+* Users
+* Employees
+* AttendanceLogs
+
+Relaciones correctamente definidas.
+
+---
+
+# Buenas prácticas
+
+Usar:
+
+* TypeScript correctamente tipado
+* Componentes reutilizables
+* Código limpio
+* Buen naming
+* Responsive design
+* Arquitectura escalable
+* Variables de entorno
+* README profesional
+
+---
+
+# Entregables esperados
+
+Quiero:
+
+* Proyecto funcional
+* Código limpio
+* Diseño premium
+* Configuración lista para Replit
+* Configuración lista para GitHub
+* Configuración lista para Vercel
+* README.md
+* .env.example
+
+---
+
+# Resultado esperado
+
+El resultado debe parecer:
+
+* un SaaS real,
+* moderno,
+* elegante,
+* listo para producción,
+* visualmente impresionante,
+* y digno de un portafolio profesional.
+
+NO quiero una plantilla básica.
+Quiero un sistema minimalista pero extremadamente bien diseñado.

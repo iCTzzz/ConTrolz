@@ -3,20 +3,25 @@ info:
   # Do not change the title, if the title changes, the import paths will be broken
   title: Api
   version: 0.1.0
-  description: API specification
+  description: Attendance control SaaS API
 servers:
   - url: /api
     description: Base API path
 tags:
   - name: health
     description: Health operations
+  - name: employees
+    description: Employee management
+  - name: attendance
+    description: Attendance check-in/check-out
+  - name: dashboard
+    description: Dashboard statistics
 paths:
   /healthz:
     get:
       operationId: healthCheck
       tags: [health]
       summary: Health check
-      description: Returns server health status
       responses:
         "200":
           description: Healthy
@@ -24,6 +29,281 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+
+  /employees:
+    get:
+      operationId: listEmployees
+      tags: [employees]
+      summary: List all employees
+      parameters:
+        - name: search
+          in: query
+          schema:
+            type: string
+        - name: department
+          in: query
+          schema:
+            type: string
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [active, inactive]
+      responses:
+        "200":
+          description: List of employees
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Employee"
+    post:
+      operationId: createEmployee
+      tags: [employees]
+      summary: Create a new employee
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/EmployeeInput"
+      responses:
+        "201":
+          description: Created employee
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Employee"
+        "409":
+          description: Employee ID already exists
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /employees/{id}:
+    get:
+      operationId: getEmployee
+      tags: [employees]
+      summary: Get employee by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Employee
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Employee"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    put:
+      operationId: updateEmployee
+      tags: [employees]
+      summary: Update an employee
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/EmployeeUpdate"
+      responses:
+        "200":
+          description: Updated employee
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Employee"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    delete:
+      operationId: deleteEmployee
+      tags: [employees]
+      summary: Delete an employee
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "204":
+          description: Deleted
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /attendance/checkin:
+    post:
+      operationId: checkIn
+      tags: [attendance]
+      summary: Register employee check-in
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AttendanceAction"
+      responses:
+        "201":
+          description: Check-in registered
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AttendanceLog"
+        "400":
+          description: Already checked in or invalid
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Employee not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /attendance/checkout:
+    post:
+      operationId: checkOut
+      tags: [attendance]
+      summary: Register employee check-out
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AttendanceAction"
+      responses:
+        "200":
+          description: Check-out registered
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AttendanceLog"
+        "400":
+          description: No active check-in found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "404":
+          description: Employee not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /attendance/logs:
+    get:
+      operationId: listAttendanceLogs
+      tags: [attendance]
+      summary: List attendance logs
+      parameters:
+        - name: employeeId
+          in: query
+          schema:
+            type: string
+        - name: date
+          in: query
+          description: Filter by date (YYYY-MM-DD)
+          schema:
+            type: string
+        - name: type
+          in: query
+          schema:
+            type: string
+            enum: [checkin, checkout]
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 50
+        - name: offset
+          in: query
+          schema:
+            type: integer
+            default: 0
+      responses:
+        "200":
+          description: Attendance logs
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AttendanceLogsResponse"
+
+  /attendance/active:
+    get:
+      operationId: getActiveEmployees
+      tags: [attendance]
+      summary: Get currently active (checked-in) employees
+      responses:
+        "200":
+          description: Active employees
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ActiveEmployee"
+
+  /attendance/recent:
+    get:
+      operationId: getRecentActivity
+      tags: [attendance]
+      summary: Get recent attendance activity
+      parameters:
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 10
+      responses:
+        "200":
+          description: Recent activity
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/AttendanceLog"
+
+  /dashboard/stats:
+    get:
+      operationId: getDashboardStats
+      tags: [dashboard]
+      summary: Get dashboard KPI statistics
+      responses:
+        "200":
+          description: Dashboard statistics
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DashboardStats"
+
 components:
   schemas:
     HealthStatus:
@@ -31,6 +311,143 @@ components:
       properties:
         status:
           type: string
-      required:
-        - status
+      required: [status]
 
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+        message:
+          type: string
+      required: [error, message]
+
+    Employee:
+      type: object
+      properties:
+        id:
+          type: string
+        employeeCode:
+          type: string
+        name:
+          type: string
+        department:
+          type: string
+        position:
+          type: string
+        status:
+          type: string
+          enum: [active, inactive]
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+      required: [id, employeeCode, name, department, position, status, createdAt, updatedAt]
+
+    EmployeeInput:
+      type: object
+      properties:
+        employeeCode:
+          type: string
+        name:
+          type: string
+        department:
+          type: string
+        position:
+          type: string
+        status:
+          type: string
+          enum: [active, inactive]
+          default: active
+      required: [employeeCode, name, department, position]
+
+    EmployeeUpdate:
+      type: object
+      properties:
+        name:
+          type: string
+        department:
+          type: string
+        position:
+          type: string
+        status:
+          type: string
+          enum: [active, inactive]
+
+    AttendanceLog:
+      type: object
+      properties:
+        id:
+          type: string
+        employeeId:
+          type: string
+        employeeCode:
+          type: string
+        employeeName:
+          type: string
+        department:
+          type: string
+        type:
+          type: string
+          enum: [checkin, checkout]
+        timestamp:
+          type: string
+          format: date-time
+      required: [id, employeeId, employeeCode, employeeName, department, type, timestamp]
+
+    AttendanceAction:
+      type: object
+      properties:
+        employeeCode:
+          type: string
+      required: [employeeCode]
+
+    AttendanceLogsResponse:
+      type: object
+      properties:
+        logs:
+          type: array
+          items:
+            $ref: "#/components/schemas/AttendanceLog"
+        total:
+          type: integer
+        offset:
+          type: integer
+        limit:
+          type: integer
+      required: [logs, total, offset, limit]
+
+    ActiveEmployee:
+      type: object
+      properties:
+        employeeId:
+          type: string
+        employeeCode:
+          type: string
+        name:
+          type: string
+        department:
+          type: string
+        position:
+          type: string
+        checkedInAt:
+          type: string
+          format: date-time
+      required: [employeeId, employeeCode, name, department, position, checkedInAt]
+
+    DashboardStats:
+      type: object
+      properties:
+        totalEmployees:
+          type: integer
+        activeNow:
+          type: integer
+        checkInsToday:
+          type: integer
+        checkOutsToday:
+          type: integer
+        presentToday:
+          type: integer
+      required: [totalEmployees, activeNow, checkInsToday, checkOutsToday, presentToday]
