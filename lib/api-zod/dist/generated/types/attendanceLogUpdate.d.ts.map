@@ -1,0 +1,1 @@
+{"version":3,"file":"attendanceLogUpdate.d.ts","sourceRoot":"","sources":["../../../src/generated/types/attendanceLogUpdate.ts"],"names":[],"mappings":"AAAA;;;;;;GAMG;AACH,OAAO,KAAK,EAAE,uBAAuB,EAAE,MAAM,2BAA2B,CAAC;AAEzE,MAAM,WAAW,mBAAmB;IAClC,IAAI,CAAC,EAAE,uBAAuB,CAAC;IAC/B,SAAS,CAAC,EAAE,IAAI,CAAC;CAClB"}

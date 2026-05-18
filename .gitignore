@@ -2,6 +2,9 @@
 
 # compiled output
 dist
+# Keep compiled lib declarations for Vercel (needs .d.ts files without running tsc first)
+!lib/*/dist/
+!lib/*/dist/**
 tmp
 out-tsc
 *.tsbuildinfo

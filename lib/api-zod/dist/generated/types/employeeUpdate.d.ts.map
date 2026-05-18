@@ -1,0 +1,1 @@
+{"version":3,"file":"employeeUpdate.d.ts","sourceRoot":"","sources":["../../../src/generated/types/employeeUpdate.ts"],"names":[],"mappings":"AAAA;;;;;;GAMG;AACH,OAAO,KAAK,EAAE,oBAAoB,EAAE,MAAM,wBAAwB,CAAC;AAEnE,MAAM,WAAW,cAAc;IAC7B,IAAI,CAAC,EAAE,MAAM,CAAC;IACd,UAAU,CAAC,EAAE,MAAM,CAAC;IACpB,QAAQ,CAAC,EAAE,MAAM,CAAC;IAClB,MAAM,CAAC,EAAE,oBAAoB,CAAC;CAC/B"}
