@@ -39,6 +39,7 @@ import {
 } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Plus, Search, Pencil, Trash2, Loader2 } from "lucide-react";
+import { motion } from "framer-motion";
 
 type EmployeeStatus = "active" | "inactive";
 
@@ -103,7 +104,7 @@ export default function Employees() {
 
   const handleSubmit = () => {
     if (!form.employeeCode || !form.name || !form.department || !form.position) {
-      toast.error("Please fill in all required fields");
+      toast.error("Completa todos los campos requeridos");
       return;
     }
 
@@ -112,12 +113,12 @@ export default function Employees() {
         { id: editingId, data: { name: form.name, department: form.department, position: form.position, status: form.status } },
         {
           onSuccess: () => {
-            toast.success("Employee updated");
+            toast.success("Empleado actualizado");
             setShowForm(false);
             invalidate();
           },
           onError: (err: any) => {
-            toast.error(err.response?.data?.message || "Failed to update employee");
+            toast.error(err.response?.data?.message || "Error al actualizar empleado");
           },
         }
       );
@@ -126,12 +127,12 @@ export default function Employees() {
         { data: form },
         {
           onSuccess: () => {
-            toast.success("Employee created");
+            toast.success("Empleado creado");
             setShowForm(false);
             invalidate();
           },
           onError: (err: any) => {
-            toast.error(err.response?.data?.message || "Failed to create employee");
+            toast.error(err.response?.data?.message || "Error al crear empleado");
           },
         }
       );
@@ -144,12 +145,12 @@ export default function Employees() {
       { id: deleteId },
       {
         onSuccess: () => {
-          toast.success("Employee deleted");
+          toast.success("Empleado eliminado");
           setDeleteId(null);
           invalidate();
         },
         onError: (err: any) => {
-          toast.error(err.response?.data?.message || "Failed to delete employee");
+          toast.error(err.response?.data?.message || "Error al eliminar empleado");
         },
       }
     );
@@ -160,184 +161,205 @@ export default function Employees() {
   return (
     <Layout>
       <div className="flex-1 overflow-auto">
-        <div className="h-16 flex items-center justify-between px-8 border-b bg-card">
-          <h1 className="text-xl font-semibold">Employees</h1>
-          <Button onClick={openCreate} size="sm" className="gap-2">
+        <div className="h-16 flex items-center justify-between px-8 border-b border-border bg-card/50 backdrop-blur-sm sticky top-0 z-10">
+          <h1 className="text-lg font-semibold">Empleados</h1>
+          <Button onClick={openCreate} size="sm" className="gap-2 bg-primary hover:bg-primary/90 shadow-sm shadow-primary/20">
             <Plus className="h-4 w-4" />
-            Add Employee
+            Agregar Empleado
           </Button>
         </div>
 
-        <div className="p-8 space-y-6">
-          <div className="flex items-center gap-4">
+        <div className="p-8 space-y-5">
+          <div className="flex items-center gap-3">
             <div className="relative flex-1 max-w-sm">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
-                placeholder="Search employees..."
+                placeholder="Buscar empleados..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="pl-9"
+                className="pl-9 bg-accent/40 border-border/60"
               />
             </div>
             <Select value={statusFilter} onValueChange={setStatusFilter}>
-              <SelectTrigger className="w-36">
-                <SelectValue placeholder="Status" />
+              <SelectTrigger className="w-36 bg-accent/40 border-border/60">
+                <SelectValue placeholder="Estado" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">All Status</SelectItem>
-                <SelectItem value="active">Active</SelectItem>
-                <SelectItem value="inactive">Inactive</SelectItem>
+                <SelectItem value="all">Todos</SelectItem>
+                <SelectItem value="active">Activos</SelectItem>
+                <SelectItem value="inactive">Inactivos</SelectItem>
               </SelectContent>
             </Select>
           </div>
 
-          <div className="border rounded-lg overflow-hidden bg-card shadow-sm">
+          <motion.div
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3 }}
+            className="border border-border/60 rounded-xl overflow-hidden bg-card/80"
+          >
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b bg-muted/30">
-                  <th className="text-left px-6 py-3 font-medium text-muted-foreground">Code</th>
-                  <th className="text-left px-6 py-3 font-medium text-muted-foreground">Name</th>
-                  <th className="text-left px-6 py-3 font-medium text-muted-foreground">Department</th>
-                  <th className="text-left px-6 py-3 font-medium text-muted-foreground">Position</th>
-                  <th className="text-left px-6 py-3 font-medium text-muted-foreground">Status</th>
-                  <th className="text-right px-6 py-3 font-medium text-muted-foreground">Actions</th>
+                <tr className="border-b border-border/60 bg-muted/20">
+                  <th className="text-left px-6 py-3 font-medium text-muted-foreground text-xs uppercase tracking-wider">Código</th>
+                  <th className="text-left px-6 py-3 font-medium text-muted-foreground text-xs uppercase tracking-wider">Nombre</th>
+                  <th className="text-left px-6 py-3 font-medium text-muted-foreground text-xs uppercase tracking-wider">Departamento</th>
+                  <th className="text-left px-6 py-3 font-medium text-muted-foreground text-xs uppercase tracking-wider">Cargo</th>
+                  <th className="text-left px-6 py-3 font-medium text-muted-foreground text-xs uppercase tracking-wider">Estado</th>
+                  <th className="text-right px-6 py-3 font-medium text-muted-foreground text-xs uppercase tracking-wider">Acciones</th>
                 </tr>
               </thead>
               <tbody>
                 {isLoading ? (
                   Array.from({ length: 5 }).map((_, i) => (
-                    <tr key={i} className="border-b">
+                    <tr key={i} className="border-b border-border/40">
                       {Array.from({ length: 6 }).map((_, j) => (
                         <td key={j} className="px-6 py-4">
-                          <Skeleton className="h-4 w-full" />
+                          <Skeleton className="h-4 w-full bg-muted/50" />
                         </td>
                       ))}
                     </tr>
                   ))
                 ) : !employees?.length ? (
                   <tr>
-                    <td colSpan={6} className="text-center py-12 text-muted-foreground">
-                      No employees found
+                    <td colSpan={6} className="text-center py-14 text-muted-foreground">
+                      Sin empleados registrados
                     </td>
                   </tr>
                 ) : (
-                  employees.map((emp) => (
-                    <tr key={emp.id} className="border-b last:border-0 hover:bg-muted/20 transition-colors">
+                  employees.map((emp, i) => (
+                    <motion.tr
+                      key={emp.id}
+                      initial={{ opacity: 0, x: -4 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: i * 0.03, duration: 0.2 }}
+                      className="border-b border-border/40 last:border-0 hover:bg-accent/30 transition-colors duration-150"
+                    >
                       <td className="px-6 py-4 font-mono text-xs text-muted-foreground">{emp.employeeCode}</td>
                       <td className="px-6 py-4 font-medium">{emp.name}</td>
                       <td className="px-6 py-4 text-muted-foreground">{emp.department}</td>
                       <td className="px-6 py-4 text-muted-foreground">{emp.position}</td>
                       <td className="px-6 py-4">
-                        <Badge variant={emp.status === "active" ? "default" : "secondary"}>
-                          {emp.status}
+                        <Badge
+                          variant={emp.status === "active" ? "default" : "secondary"}
+                          className={emp.status === "active"
+                            ? "bg-emerald-500/15 text-emerald-400 border-emerald-500/20 hover:bg-emerald-500/20"
+                            : "bg-muted/60 text-muted-foreground"
+                          }
+                        >
+                          {emp.status === "active" ? "Activo" : "Inactivo"}
                         </Badge>
                       </td>
                       <td className="px-6 py-4">
-                        <div className="flex items-center justify-end gap-2">
-                          <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => openEdit(emp)}>
-                            <Pencil className="h-4 w-4" />
+                        <div className="flex items-center justify-end gap-1">
+                          <Button variant="ghost" size="icon" className="h-8 w-8 hover:bg-accent" onClick={() => openEdit(emp)}>
+                            <Pencil className="h-3.5 w-3.5" />
                           </Button>
                           <Button
                             variant="ghost"
                             size="icon"
-                            className="h-8 w-8 text-destructive hover:text-destructive"
+                            className="h-8 w-8 text-destructive hover:text-destructive hover:bg-destructive/10"
                             onClick={() => setDeleteId(emp.id)}
                           >
-                            <Trash2 className="h-4 w-4" />
+                            <Trash2 className="h-3.5 w-3.5" />
                           </Button>
                         </div>
                       </td>
-                    </tr>
+                    </motion.tr>
                   ))
                 )}
               </tbody>
             </table>
-          </div>
+          </motion.div>
         </div>
       </div>
 
       <Dialog open={showForm} onOpenChange={setShowForm}>
-        <DialogContent className="max-w-md">
+        <DialogContent className="max-w-md bg-card border-border/60">
           <DialogHeader>
-            <DialogTitle>{editingId ? "Edit Employee" : "Add Employee"}</DialogTitle>
+            <DialogTitle>{editingId ? "Editar Empleado" : "Nuevo Empleado"}</DialogTitle>
           </DialogHeader>
           <div className="space-y-4 py-2">
             {!editingId && (
               <div className="space-y-1.5">
-                <Label>Employee Code</Label>
+                <Label>Código de Empleado</Label>
                 <Input
-                  placeholder="e.g. EMP007"
+                  placeholder="Ej: EMP007"
                   value={form.employeeCode}
                   onChange={(e) => setForm({ ...form, employeeCode: e.target.value.toUpperCase() })}
+                  className="font-mono bg-accent/40 border-border/60"
                 />
               </div>
             )}
             <div className="space-y-1.5">
-              <Label>Full Name</Label>
+              <Label>Nombre completo</Label>
               <Input
-                placeholder="Full name"
+                placeholder="Nombre completo"
                 value={form.name}
                 onChange={(e) => setForm({ ...form, name: e.target.value })}
+                className="bg-accent/40 border-border/60"
               />
             </div>
             <div className="space-y-1.5">
-              <Label>Department</Label>
+              <Label>Departamento</Label>
               <Input
-                placeholder="e.g. Engineering"
+                placeholder="Ej: Ingeniería"
                 value={form.department}
                 onChange={(e) => setForm({ ...form, department: e.target.value })}
+                className="bg-accent/40 border-border/60"
               />
             </div>
             <div className="space-y-1.5">
-              <Label>Position</Label>
+              <Label>Cargo</Label>
               <Input
-                placeholder="e.g. Senior Developer"
+                placeholder="Ej: Desarrollador Senior"
                 value={form.position}
                 onChange={(e) => setForm({ ...form, position: e.target.value })}
+                className="bg-accent/40 border-border/60"
               />
             </div>
             <div className="space-y-1.5">
-              <Label>Status</Label>
+              <Label>Estado</Label>
               <Select value={form.status} onValueChange={(v) => setForm({ ...form, status: v as EmployeeStatus })}>
-                <SelectTrigger>
+                <SelectTrigger className="bg-accent/40 border-border/60">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="active">Active</SelectItem>
-                  <SelectItem value="inactive">Inactive</SelectItem>
+                  <SelectItem value="active">Activo</SelectItem>
+                  <SelectItem value="inactive">Inactivo</SelectItem>
                 </SelectContent>
               </Select>
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setShowForm(false)} disabled={isSaving}>
-              Cancel
+            <Button variant="outline" onClick={() => setShowForm(false)} disabled={isSaving} className="border-border/60">
+              Cancelar
             </Button>
-            <Button onClick={handleSubmit} disabled={isSaving}>
+            <Button onClick={handleSubmit} disabled={isSaving} className="bg-primary hover:bg-primary/90">
               {isSaving && <Loader2 className="h-4 w-4 animate-spin mr-2" />}
-              {editingId ? "Save Changes" : "Create Employee"}
+              {editingId ? "Guardar Cambios" : "Crear Empleado"}
             </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
 
       <AlertDialog open={!!deleteId} onOpenChange={(open) => !open && setDeleteId(null)}>
-        <AlertDialogContent>
+        <AlertDialogContent className="bg-card border-border/60">
           <AlertDialogHeader>
-            <AlertDialogTitle>Delete Employee</AlertDialogTitle>
+            <AlertDialogTitle>Eliminar Empleado</AlertDialogTitle>
             <AlertDialogDescription>
-              This will permanently delete the employee and all their attendance records. This action cannot be undone.
+              Esto eliminará permanentemente al empleado y todos sus registros de asistencia. Esta acción no se puede deshacer.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogCancel className="border-border/60">Cancelar</AlertDialogCancel>
             <AlertDialogAction
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
               onClick={handleDelete}
               disabled={deleteEmployee.isPending}
             >
               {deleteEmployee.isPending && <Loader2 className="h-4 w-4 animate-spin mr-2" />}
-              Delete
+              Eliminar
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
